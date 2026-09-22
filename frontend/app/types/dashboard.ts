@@ -88,6 +88,28 @@ export interface RepairPriorityItem {
   dispatchStatus?: DispatchStatus;
 }
 
+export interface RepairVerification {
+  id: string;
+  incidentCode: string;
+  location: string;
+  dmaZone: string;
+  pipeType: string;
+  pipeDiameter: string;
+  repairedAt: string;
+  repairDuration: string;
+  verificationConfidence: number; // percentage e.g. 99.4
+  status: 'VERIFIED_REPAIRED';
+  waterSavedLitersPerDay: number;
+  waterLossReductionPercent: number;
+  beforePressurePsi: number;
+  afterPressurePsi: number;
+  beforeFlowGpm: number;
+  afterFlowGpm: number;
+  beforeAcousticNoiseDb: number;
+  afterAcousticNoiseDb: number;
+  summary: string;
+}
+
 export interface DMAZone {
   id: string;
   name: string;

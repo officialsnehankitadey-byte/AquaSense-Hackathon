@@ -8,13 +8,15 @@ import { NetworkTopologyMap } from './components/dashboard/NetworkTopologyMap';
 import { IncidentsList } from './components/dashboard/IncidentsList';
 import { RepairPriorityCard } from './components/dashboard/RepairPriorityCard';
 import { TelemetryChart } from './components/dashboard/TelemetryChart';
+import { RepairVerificationCard } from './components/dashboard/RepairVerificationCard';
 import { 
   mockKPIs, 
   mockIncidents, 
   mockNetworkNodes, 
   mockPipeSegments, 
   mockRepairPriorities, 
-  mockDMAZones 
+  mockDMAZones,
+  mockRepairVerifications
 } from './data/mockData';
 import { Incident, IncidentStatus } from './types/dashboard';
 
@@ -136,6 +138,9 @@ export default function DashboardPage() {
             <div className="lg:col-span-1 space-y-6">
               {/* Repair Priority Section */}
               <RepairPriorityCard priorities={mockRepairPriorities} />
+
+              {/* Repair Verification Section */}
+              <RepairVerificationCard verifications={mockRepairVerifications} />
             </div>
           </div>
         </main>

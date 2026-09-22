@@ -1,4 +1,4 @@
-import { Incident, KPIMetric, NetworkNode, PipeSegment, RepairPriorityItem, DMAZone } from '../types/dashboard';
+import { Incident, KPIMetric, NetworkNode, PipeSegment, RepairPriorityItem, DMAZone, RepairVerification } from '../types/dashboard';
 
 export const mockKPIs: KPIMetric[] = [
   {
@@ -253,4 +253,70 @@ export const mockTelemetryHistory = [
   { time: '16:00', baselineGpm: 1850, actualGpm: 1995, pressurePsi: 49.8, acousticNoiseDb: 84 }, // Peak acoustic leak signature
   { time: '18:00', baselineGpm: 2050, actualGpm: 2195, pressurePsi: 51.0, acousticNoiseDb: 79 },
   { time: '20:00', baselineGpm: 1700, actualGpm: 1845, pressurePsi: 52.8, acousticNoiseDb: 74 },
+];
+
+export const mockRepairVerifications: RepairVerification[] = [
+  {
+    id: 'verif-201',
+    incidentCode: 'LEAK-2026-855',
+    location: '4th Ave & Main St Commercial Junction',
+    dmaZone: 'DMA-02 Downtown Commercial Core',
+    pipeType: 'Ductile Iron',
+    pipeDiameter: '16 in',
+    repairedAt: '2 hours ago',
+    repairDuration: '2.8 hours',
+    verificationConfidence: 99.4,
+    status: 'VERIFIED_REPAIRED',
+    waterSavedLitersPerDay: 4147200,
+    waterLossReductionPercent: 91.2,
+    beforePressurePsi: 48.5,
+    afterPressurePsi: 64.2,
+    beforeFlowGpm: 2180,
+    afterFlowGpm: 1420,
+    beforeAcousticNoiseDb: 84,
+    afterAcousticNoiseDb: 12,
+    summary: 'Hydro-acoustic sensors AS-204 & AS-208 confirm 0 dB acoustic leak noise post sleeve replacement. System pressure fully restored across DMA-02.',
+  },
+  {
+    id: 'verif-202',
+    incidentCode: 'LEAK-2026-842',
+    location: 'Highland Reservoir Pressure Reducing Valve B',
+    dmaZone: 'DMA-01 North Ridge Reservoir',
+    pipeType: 'Cast Iron',
+    pipeDiameter: '12 in',
+    repairedAt: '1 day ago',
+    repairDuration: '3.5 hours',
+    verificationConfidence: 98.7,
+    status: 'VERIFIED_REPAIRED',
+    waterSavedLitersPerDay: 2615000,
+    waterLossReductionPercent: 86.5,
+    beforePressurePsi: 52.1,
+    afterPressurePsi: 68.0,
+    beforeFlowGpm: 1650,
+    afterFlowGpm: 1170,
+    beforeAcousticNoiseDb: 76,
+    afterAcousticNoiseDb: 14,
+    summary: 'Flange replacement & joint seating verified by automated transient pressure surge test and AI correlation scanner.',
+  },
+  {
+    id: 'verif-203',
+    incidentCode: 'LEAK-2026-830',
+    location: 'South Port Feeder Line Segment 9',
+    dmaZone: 'DMA-05 South Port Feed',
+    pipeType: 'HDPE',
+    pipeDiameter: '10 in',
+    repairedAt: '2 days ago',
+    repairDuration: '1.9 hours',
+    verificationConfidence: 97.9,
+    status: 'VERIFIED_REPAIRED',
+    waterSavedLitersPerDay: 1850000,
+    waterLossReductionPercent: 88.0,
+    beforePressurePsi: 54.3,
+    afterPressurePsi: 62.5,
+    beforeFlowGpm: 1340,
+    afterFlowGpm: 1000,
+    beforeAcousticNoiseDb: 68,
+    afterAcousticNoiseDb: 11,
+    summary: 'Electrofusion coupling repair completed. Baseline minimum night flow stabilized at optimal threshold.',
+  },
 ];
