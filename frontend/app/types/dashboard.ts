@@ -1,6 +1,13 @@
 export type SeverityLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 
-export type IncidentStatus = 'UNASSIGNED' | 'INVESTIGATING' | 'DISPATCHED' | 'REPAIRED';
+export type IncidentStatus = 
+  | 'UNASSIGNED' 
+  | 'ACKNOWLEDGED' 
+  | 'INVESTIGATING' 
+  | 'DISPATCHED' 
+  | 'REPAIR_IN_PROGRESS' 
+  | 'REPAIRED' 
+  | 'RESOLVED';
 
 export interface KPIMetric {
   id: string;
@@ -30,6 +37,9 @@ export interface Incident {
   pressureDropPsi: number; // PSI drop
   assignedCrew?: string;
   summary: string;
+  repairPriority?: number;
+  recommendedAction?: string;
+  suspectedSegment?: string;
 }
 
 export interface NetworkNode {

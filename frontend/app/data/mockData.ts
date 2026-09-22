@@ -67,6 +67,9 @@ export const mockIncidents: Incident[] = [
     acousticFreq: 340,
     pressureDropPsi: 14.2,
     summary: 'Sudden pressure drop of 14.2 PSI with high-pitch 340Hz acoustic resonance signature detected by Acoustic Sensor AS-402.',
+    repairPriority: 1,
+    suspectedSegment: 'Pipe Segment #pipe-6 (Node-4 PRV-12 → Node-7 AS-402)',
+    recommendedAction: 'Immediate isolation of Valve V-402 required. High probability of sinkhole erosion under 32nd Ave if unaddressed for >6 hours.',
   },
   {
     id: 'inc-102',
@@ -85,6 +88,9 @@ export const mockIncidents: Incident[] = [
     acousticFreq: 285,
     pressureDropPsi: 8.7,
     summary: 'Acoustic sensor correlation between AS-109 and AS-112 indicates joint displacement leak near PRV-12.',
+    repairPriority: 2,
+    suspectedSegment: 'Pipe Segment #pipe-2 (Node-2 Pump Station → Node-3 AS-109)',
+    recommendedAction: 'Field Crew Alpha dispatched. Adjust PRV-12 pressure threshold to 52 PSI to reduce burst energy during excavation.',
   },
   {
     id: 'inc-103',
@@ -102,6 +108,9 @@ export const mockIncidents: Incident[] = [
     acousticFreq: 410,
     pressureDropPsi: 6.4,
     summary: 'Night-flow minimum anomaly analysis flagged baseline flow spike inconsistent with seasonal commercial consumption.',
+    repairPriority: 3,
+    suspectedSegment: 'Pipe Segment #pipe-8 (Node-7 AS-402 → Node-9 AS-418)',
+    recommendedAction: 'Schedule acoustic correlation leak pinpointing during off-peak commercial hours (01:00 - 04:00 AM).',
   },
   {
     id: 'inc-104',
@@ -119,6 +128,9 @@ export const mockIncidents: Incident[] = [
     acousticFreq: 195,
     pressureDropPsi: 3.1,
     summary: 'Low-frequency acoustic vibration pattern detected during automated midnight hydro-acoustic scan.',
+    repairPriority: 4,
+    suspectedSegment: 'Pipe Segment #pipe-10 (Node-10 PS-501 → Node-11 AS-509)',
+    recommendedAction: 'Monitor pressure variance for 24h before dispatching secondary field inspection.',
   },
 ];
 

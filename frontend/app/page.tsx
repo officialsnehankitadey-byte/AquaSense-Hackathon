@@ -16,6 +16,7 @@ import {
   mockRepairPriorities, 
   mockDMAZones 
 } from './data/mockData';
+import { Incident, IncidentStatus } from './types/dashboard';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -24,6 +25,7 @@ export default function DashboardPage() {
   const [selectedZone, setSelectedZone] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [incidents, setIncidents] = useState<Incident[]>(mockIncidents);
 
   // Sync dark class on html root element
   useEffect(() => {
@@ -41,8 +43,14 @@ export default function DashboardPage() {
     }, 1000);
   };
 
+  const handleUpdateIncidentStatus = (incidentId: string, newStatus: IncidentStatus) => {
+    setIncidents(prev =>
+      prev.map(inc => (inc.id === incidentId ? { ...inc, status: newStatus } : inc))
+    );
+  };
+
   // Filtered incidents based on search & DMA zone
-  const filteredIncidents = mockIncidents.filter((inc) => {
+  const filteredIncidents = incidents.filter((inc) => {
     const matchesSearch = 
       inc.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
       inc.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -119,7 +127,10 @@ export default function DashboardPage() {
               <TelemetryChart />
               
               {/* Incidents Log */}
-              <IncidentsList incidents={filteredIncidents} />
+              <IncidentsList 
+                incidents={filteredIncidents} 
+                onUpdateIncidentStatus={handleUpdateIncidentStatus}
+              />
             </div>
 
             <div className="lg:col-span-1 space-y-6">
