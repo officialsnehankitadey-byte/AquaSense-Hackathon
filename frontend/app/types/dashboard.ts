@@ -67,9 +67,15 @@ export interface PipeSegment {
   flowRateGpm: number;
 }
 
+export type DispatchStatus = 'PENDING' | 'DISPATCHED' | 'COMPLETED';
+
 export interface RepairPriorityItem {
   id: string;
   incidentId: string;
+  incidentCode?: string;
+  dmaZone?: string;
+  confidence?: number;
+  estimatedLossGpm?: number;
   rank: number;
   location: string;
   severity: SeverityLevel;
@@ -79,6 +85,7 @@ export interface RepairPriorityItem {
   estimatedRepairHours: number;
   roiDays: number;
   targetValveToIsolate: string;
+  dispatchStatus?: DispatchStatus;
 }
 
 export interface DMAZone {

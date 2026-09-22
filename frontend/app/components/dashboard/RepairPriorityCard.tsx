@@ -1,25 +1,100 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Wrench, 
   Sparkles, 
-  ArrowRight, 
   Clock, 
-  DollarSign, 
   ShieldAlert, 
   CheckCircle2, 
-  Layers,
-  Flame,
-  Check
+  Flame, 
+  Check, 
+  UserCheck, 
+  MapPin, 
+  Eye, 
+  X, 
+  Droplets, 
+  DollarSign, 
+  Activity, 
+  Layers, 
+  ArrowUpRight,
+  ShieldCheck,
+  AlertTriangle
 } from 'lucide-react';
-import { RepairPriorityItem } from '../../types/dashboard';
+import { RepairPriorityItem, DispatchStatus, SeverityLevel } from '../../types/dashboard';
 
 interface RepairPriorityCardProps {
   priorities: RepairPriorityItem[];
 }
 
-export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ priorities }) => {
+export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ priorities: initialPriorities }) => {
+  const [items, setItems] = useState<RepairPriorityItem[]>(initialPriorities);
+  const [selectedPriority, setSelectedPriority] = useState<RepairPriorityItem | null>(null);
+  const [feedbackMsg, setFeedbackMsg] = useState<string | null>(null);
+
+  const handleUpdateStatus = (id: string, newStatus: DispatchStatus) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, dispatchStatus: newStatus } : item))
+    );
+
+    if (selectedPriority && selectedPriority.id === id) {
+      setSelectedPriority((prev) => prev ? { ...prev, dispatchStatus: newStatus } : null);
+    }
+
+    const statusText = newStatus === 'PENDING' ? 'Pending' : newStatus === 'DISPATCHED' ? 'Dispatched' : 'Completed';
+    setFeedbackMsg(`Work Order status updated to "${statusText}"`);
+    setTimeout(() => {
+      setFeedbackMsg(null);
+    }, 3000);
+  };
+
+  const getSeverityBadge = (severity: SeverityLevel) => {
+    switch (severity) {
+      case 'CRITICAL':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold rounded-md bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+            CRITICAL
+          </span>
+        );
+      case 'HIGH':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+            HIGH
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-bold rounded-md bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+            MEDIUM
+          </span>
+        );
+    }
+  };
+
+  const getDispatchBadge = (status?: DispatchStatus) => {
+    switch (status) {
+      case 'DISPATCHED':
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-cyan-600 dark:text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">
+            <UserCheck className="w-3 h-3" /> Dispatched
+          </span>
+        );
+      case 'COMPLETED':
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+            <ShieldCheck className="w-3 h-3" /> Completed
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+            <Clock className="w-3 h-3" /> Pending
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm p-4 md:p-5 flex flex-col">
       {/* Header */}
@@ -33,7 +108,7 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
               AI Repair Priority Matrix & ROI Dispatch
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Optimal work order dispatch sequence computed by economic & erosion risk factors
+              Click any priority card for work order details & dispatch status
             </p>
           </div>
         </div>
@@ -45,16 +120,18 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
 
       {/* Priority Cards Queue */}
       <div className="space-y-3.5">
-        {priorities.map((prio) => {
+        {items.map((prio) => {
           const isTopRank = prio.rank === 1;
+          const currentStatus = prio.dispatchStatus || 'PENDING';
 
           return (
             <div
               key={prio.id}
-              className={`p-4 rounded-xl border transition-all ${
+              onClick={() => setSelectedPriority(prio)}
+              className={`p-4 rounded-xl border transition-all cursor-pointer group ${
                 isTopRank
-                  ? 'bg-gradient-to-r from-red-500/5 via-amber-500/5 to-transparent border-red-500/30 dark:border-red-500/40 shadow-sm'
-                  : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800'
+                  ? 'bg-gradient-to-r from-red-500/5 via-amber-500/5 to-transparent border-red-500/30 dark:border-red-500/40 hover:border-red-500/60 shadow-sm'
+                  : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-cyan-500/40'
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
@@ -69,9 +146,12 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
                     #{prio.rank}
                   </span>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900 dark:text-white">
-                      {prio.location}
-                    </h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-cyan-500 transition-colors">
+                        {prio.location}
+                      </h4>
+                      {getSeverityBadge(prio.severity)}
+                    </div>
                     <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                       Target Isolation: <strong className="text-cyan-600 dark:text-cyan-400">{prio.targetValveToIsolate}</strong>
                     </span>
@@ -79,48 +159,228 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                    ROI: {prio.roiDays}d
-                  </span>
+                  {getDispatchBadge(currentStatus)}
                   <span className="text-xs font-mono font-bold text-red-600 dark:text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
-                    -${prio.economicLossPerDay}/day
+                    -${prio.economicLossPerDay.toLocaleString()}/day
                   </span>
                 </div>
               </div>
 
               {/* AI Recommendation Box */}
               <p className="text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 mb-3 leading-relaxed">
-                <strong className="text-cyan-600 dark:text-cyan-400 font-medium">AI Strategy:</strong> {prio.aiRecommendation}
+                <strong className="text-cyan-600 dark:text-cyan-400 font-medium">AI Reason & Strategy:</strong> {prio.aiRecommendation}
               </p>
 
-              {/* Structural Risk & Dispatch Stats */}
+              {/* Structural Risk & Dispatch Actions */}
               <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1">
                     <Flame className="w-3.5 h-3.5 text-amber-500" />
-                    Structural Risk: <strong className="text-slate-900 dark:text-white font-mono">{prio.structuralRiskScore}/100</strong>
+                    Risk Score: <strong className="text-slate-900 dark:text-white font-mono">{prio.structuralRiskScore}/100</strong>
                   </span>
                   <span className="flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    Est. Duration: <strong className="text-slate-900 dark:text-white font-mono">{prio.estimatedRepairHours}h</strong>
+                    Est. Time: <strong className="text-slate-900 dark:text-white font-mono">{prio.estimatedRepairHours}h</strong>
                   </span>
                 </div>
 
-                <button
-                  onClick={() => alert(`Work order #${prio.rank} dispatched to field response team!`)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                    isTopRank
-                      ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:opacity-90 shadow-md shadow-cyan-600/20'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
-                  }`}
-                >
-                  <Wrench className="w-3.5 h-3.5" /> Approve Work Order
-                </button>
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  {currentStatus === 'PENDING' && (
+                    <button
+                      onClick={() => handleUpdateStatus(prio.id, 'DISPATCHED')}
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:opacity-90 transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <UserCheck className="w-3.5 h-3.5" /> Dispatch
+                    </button>
+                  )}
+                  {currentStatus === 'DISPATCHED' && (
+                    <button
+                      onClick={() => handleUpdateStatus(prio.id, 'COMPLETED')}
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Mark Completed
+                    </button>
+                  )}
+                  {currentStatus === 'COMPLETED' && (
+                    <span className="text-xs font-bold text-emerald-500 flex items-center gap-1">
+                      <Check className="w-3.5 h-3.5" /> Done
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Detail Inspector Modal */}
+      {selectedPriority && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-3 md:p-6 overflow-y-auto"
+          onClick={() => setSelectedPriority(null)}
+        >
+          <div 
+            className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 shadow-2xl relative overflow-hidden my-auto max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="p-5 border-b border-slate-800 bg-slate-950/60 flex items-start justify-between gap-4 sticky top-0 z-10">
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">
+                    Priority Rank #{selectedPriority.rank}
+                  </span>
+                  {selectedPriority.incidentCode && (
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                      ID: {selectedPriority.incidentCode}
+                    </span>
+                  )}
+                  {getSeverityBadge(selectedPriority.severity)}
+                  {getDispatchBadge(selectedPriority.dispatchStatus)}
+                </div>
+                <h3 className="text-base font-extrabold text-white mt-2 tracking-tight">
+                  {selectedPriority.location}
+                </h3>
+                <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                  <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                  {selectedPriority.dmaZone || 'DMA Network Zone'}
+                </p>
+              </div>
+              <button 
+                onClick={() => setSelectedPriority(null)}
+                className="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-4 overflow-y-auto flex-1 text-xs">
+              {/* Feedback Alert */}
+              {feedbackMsg && (
+                <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>{feedbackMsg}</span>
+                </div>
+              )}
+
+              {/* Grid 1: AI Diagnostics & Water Loss Metrics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">AI Confidence</span>
+                  <span className="font-mono font-bold text-white text-sm mt-0.5 block">{selectedPriority.confidence || 95}%</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Est. Water Loss</span>
+                  <span className="font-mono font-bold text-red-400 text-sm mt-0.5 block">
+                    {selectedPriority.estimatedLossGpm || 120} GPM
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Economic Loss</span>
+                  <span className="font-mono font-bold text-amber-400 text-sm mt-0.5 block">
+                    -${selectedPriority.economicLossPerDay.toLocaleString()}/day
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Risk Score</span>
+                  <span className="font-mono font-bold text-red-400 text-sm mt-0.5 block">
+                    {selectedPriority.structuralRiskScore}/100
+                  </span>
+                </div>
+              </div>
+
+              {/* Target Isolation & Repair Logistics */}
+              <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-2.5">
+                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                  <Wrench className="w-3.5 h-3.5 text-cyan-400" /> Target Isolation & Work Order Timing
+                </h4>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block uppercase">Target Isolation Valve</span>
+                    <span className="font-semibold text-cyan-400 text-xs mt-0.5 block">
+                      {selectedPriority.targetValveToIsolate}
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block uppercase">Est. Repair Time</span>
+                    <span className="font-semibold text-white text-xs mt-0.5 block font-mono">
+                      {selectedPriority.estimatedRepairHours} Hours
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+                    <span className="text-[10px] text-slate-400 block uppercase">Payback / ROI Period</span>
+                    <span className="font-semibold text-emerald-400 text-xs mt-0.5 block font-mono">
+                      {selectedPriority.roiDays} Days
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Repair Priority Reason & Recommended Action */}
+              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
+                <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Priority Reason & Recommended AI Strategy
+                </h4>
+                <p className="text-slate-200 leading-relaxed text-xs">
+                  {selectedPriority.aiRecommendation}
+                </p>
+              </div>
+            </div>
+
+            {/* Action Footer Bar */}
+            <div className="p-4 bg-slate-950/90 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-0 z-10">
+              <span className="text-[11px] text-slate-400 font-medium">
+                Set Dispatch Work Order Status:
+              </span>
+
+              <div className="grid grid-cols-3 gap-2 w-full sm:w-auto flex-1 max-w-md">
+                <button
+                  onClick={() => handleUpdateStatus(selectedPriority.id, 'PENDING')}
+                  className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1 border ${
+                    (selectedPriority.dispatchStatus || 'PENDING') === 'PENDING'
+                      ? 'bg-amber-600 text-white border-amber-500 shadow-lg shadow-amber-600/30'
+                      : 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
+                  }`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Pending</span>
+                </button>
+
+                <button
+                  onClick={() => handleUpdateStatus(selectedPriority.id, 'DISPATCHED')}
+                  className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1 border ${
+                    selectedPriority.dispatchStatus === 'DISPATCHED'
+                      ? 'bg-cyan-600 text-white border-cyan-500 shadow-lg shadow-cyan-600/30'
+                      : 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20'
+                  }`}
+                >
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span>Dispatched</span>
+                </button>
+
+                <button
+                  onClick={() => handleUpdateStatus(selectedPriority.id, 'COMPLETED')}
+                  className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1 border ${
+                    selectedPriority.dispatchStatus === 'COMPLETED'
+                      ? 'bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30'
+                      : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
+                  }`}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Completed</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
