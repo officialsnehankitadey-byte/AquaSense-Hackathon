@@ -74,10 +74,10 @@ export const SystemSettingsView: React.FC = () => {
                 <span>Sampling Frequency Rate</span>
                 <span className="font-mono text-cyan-500">1000 Hz</span>
               </div>
-              <select className="w-full p-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 font-mono text-slate-900 dark:text-white">
+              <select defaultValue="1000 Hz (High Resolution Hydrophone)" className="w-full p-2 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 font-mono text-slate-900 dark:text-white">
                 <option>250 Hz (Low Power Mode)</option>
                 <option>500 Hz (Standard Telemetry)</option>
-                <option selected>1000 Hz (High Resolution Hydrophone)</option>
+                <option>1000 Hz (High Resolution Hydrophone)</option>
                 <option>2000 Hz (Burst Acoustic Correlation)</option>
               </select>
             </div>

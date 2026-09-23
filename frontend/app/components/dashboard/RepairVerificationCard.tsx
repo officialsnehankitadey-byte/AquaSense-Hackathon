@@ -113,7 +113,7 @@ export const RepairVerificationCard: React.FC<RepairVerificationCardProps> = ({ 
           </span>
           <div className="mt-1">
             <span className="text-lg font-mono font-extrabold text-emerald-600 dark:text-emerald-400">
-              {current.waterSavedLitersPerDay.toLocaleString()} L
+              {current.waterSavedLitersPerDay.toLocaleString('en-US')} L
             </span>
             <span className="block text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-medium">
               Daily NRW Recovery
