@@ -412,7 +412,7 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
         {selectedNode && (
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-4 left-4 right-4 md:right-auto md:w-84 p-4 rounded-2xl bg-slate-900/95 border border-slate-700/80 backdrop-blur-lg shadow-2xl text-slate-100 z-20 transition-all duration-200"
+            className="absolute bottom-4 left-4 right-4 md:right-auto md:w-84 p-4 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700/80 backdrop-blur-lg shadow-2xl text-slate-900 dark:text-slate-100 z-20 transition-all duration-200"
           >
             <div className="flex items-start justify-between gap-2 mb-2">
               <div className="flex items-center gap-2">
@@ -421,10 +421,10 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
                   selectedNode.status === 'WARNING' ? 'bg-amber-500' : 'bg-emerald-400'
                 }`} />
                 <div>
-                  <h4 className="text-xs font-extrabold text-white leading-tight">{selectedNode.name}</h4>
+                  <h4 className="text-xs font-extrabold text-slate-900 dark:text-white leading-tight">{selectedNode.name}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-cyan-400 font-mono font-semibold">{selectedNode.zone}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">ID: {selectedNode.id}</span>
+                    <span className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono font-semibold">{selectedNode.zone}</span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">ID: {selectedNode.id}</span>
                   </div>
                 </div>
               </div>
@@ -435,7 +435,7 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
                 </span>
                 <button
                   onClick={() => setSelectedNode(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
                   title="Close panel"
                 >
                   <X className="w-4 h-4" />
@@ -444,44 +444,44 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
             </div>
 
             {/* Live Sensor Readings Grid */}
-            <div className="grid grid-cols-2 gap-2 my-3 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800">
+            <div className="grid grid-cols-2 gap-2 my-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400">
+                <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
                   <Gauge className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <p className="text-[9px] text-slate-400 uppercase font-semibold">Live Pressure</p>
-                  <p className="text-xs font-bold text-white font-mono">{selectedNode.pressurePsi} PSI</p>
+                  <p className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Live Pressure</p>
+                  <p className="text-xs font-bold text-slate-900 dark:text-white font-mono">{selectedNode.pressurePsi} PSI</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                   <Activity className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <p className="text-[9px] text-slate-400 uppercase font-semibold">Flow Rate</p>
-                  <p className="text-xs font-bold text-white font-mono">{selectedNode.flowGpm} GPM</p>
+                  <p className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Flow Rate</p>
+                  <p className="text-xs font-bold text-slate-900 dark:text-white font-mono">{selectedNode.flowGpm} GPM</p>
                 </div>
               </div>
             </div>
 
             {/* Critical Alert Details */}
             {selectedNode.status === 'CRITICAL' && (
-              <div className="p-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-[11px] text-red-200 mb-2">
-                <div className="flex items-center gap-1.5 font-bold text-red-400 mb-1">
+              <div className="p-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-[11px] text-red-700 dark:text-red-200 mb-2">
+                <div className="flex items-center gap-1.5 font-bold text-red-600 dark:text-red-400 mb-1">
                   <AlertTriangle className="w-3.5 h-3.5" /> AI Hydro-Acoustic Alert
                 </div>
-                <p className="text-[10px] text-red-200/90 leading-tight">
+                <p className="text-[10px] text-red-700/90 dark:text-red-200/90 leading-tight">
                   High-frequency acoustic resonance at 340 Hz with -14.2 PSI pressure drop. Suspected pipe rupture.
                 </p>
               </div>
             )}
 
             {/* Sensor Health Metadata */}
-            <div className="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-slate-800 font-mono">
+            <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800 font-mono">
               <span className="flex items-center gap-1">
-                <Radio className="w-3 h-3 text-emerald-400" /> Battery: {selectedNode.batteryLevel || 95}%
+                <Radio className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> Battery: {selectedNode.batteryLevel || 95}%
               </span>
               <span>Last Sync: {selectedNode.lastPing || 'Just now'}</span>
             </div>
@@ -491,7 +491,7 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
         {/* GIS Operational Map Legend */}
         <div 
           onClick={(e) => e.stopPropagation()}
-          className="absolute bottom-4 right-4 px-3 py-2 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur-md text-[11px] text-slate-300 flex flex-wrap items-center gap-3 shadow-lg z-10"
+          className="absolute bottom-4 right-4 px-3 py-2 rounded-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 backdrop-blur-md text-[11px] text-slate-700 dark:text-slate-300 flex flex-wrap items-center gap-3 shadow-lg z-10"
         >
           <span className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400" /> Healthy / Normal

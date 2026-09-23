@@ -338,30 +338,30 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
           onClick={() => setSelectedIncident(null)}
         >
           <div 
-            className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 shadow-2xl relative overflow-hidden my-auto max-h-[90vh] flex flex-col"
+            className="w-full max-w-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-slate-100 shadow-2xl relative overflow-hidden my-auto max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="p-5 border-b border-slate-800 bg-slate-950/60 flex items-start justify-between gap-4 sticky top-0 z-10">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 flex items-start justify-between gap-4 sticky top-0 z-10">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                     ID: {selectedIncident.code}
                   </span>
                   {getSeverityBadge(selectedIncident.severity)}
                   {getStatusBadge(selectedIncident.status)}
                 </div>
-                <h3 className="text-lg font-extrabold text-white mt-2 tracking-tight">
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-2 tracking-tight">
                   {selectedIncident.location}
                 </h3>
-                <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
-                  <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-0.5">
+                  <Layers className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                   {selectedIncident.dmaZone}
                 </p>
               </div>
               <button 
                 onClick={() => setSelectedIncident(null)}
-                className="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 transition-colors"
+                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 transition-colors"
                 title="Close modal"
               >
                 <X className="w-5 h-5" />
@@ -372,77 +372,77 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
             <div className="p-5 space-y-5 overflow-y-auto flex-1 text-xs">
               {/* Toast Feedback Notification */}
               {actionFeedback && (
-                <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-2 animate-fadeIn">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-semibold flex items-center gap-2 animate-fadeIn">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>{actionFeedback}</span>
                 </div>
               )}
 
               {/* Grid 1: Comprehensive Anomaly Metrics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60 flex flex-col justify-between">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                    <Clock className="w-3 h-3 text-cyan-400" /> Detection Time
+                <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-cyan-600 dark:text-cyan-400" /> Detection Time
                   </span>
-                  <span className="font-semibold text-white text-sm mt-1">{selectedIncident.detectedTime}</span>
+                  <span className="font-semibold text-slate-900 dark:text-white text-sm mt-1">{selectedIncident.detectedTime}</span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60 flex flex-col justify-between">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-cyan-400" /> AI Confidence
+                <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-cyan-600 dark:text-cyan-400" /> AI Confidence
                   </span>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="font-mono font-bold text-white text-sm">{selectedIncident.confidence}%</span>
-                    <div className="flex-1 bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                      <div className="bg-cyan-400 h-full rounded-full" style={{ width: `${selectedIncident.confidence}%` }} />
+                    <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">{selectedIncident.confidence}%</span>
+                    <div className="flex-1 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                      <div className="bg-cyan-500 dark:bg-cyan-400 h-full rounded-full" style={{ width: `${selectedIncident.confidence}%` }} />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60 flex flex-col justify-between">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                    <Gauge className="w-3 h-3 text-red-400" /> Pressure Anomaly
+                <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
+                    <Gauge className="w-3 h-3 text-red-500 dark:text-red-400" /> Pressure Anomaly
                   </span>
-                  <span className="font-mono font-bold text-red-400 text-sm mt-1">
+                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-sm mt-1">
                     -{selectedIncident.pressureDropPsi} PSI drop
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/60 flex flex-col justify-between">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
-                    <Droplets className="w-3 h-3 text-amber-400" /> Est. Loss Rate
+                <div className="p-3.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 flex flex-col justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider flex items-center gap-1">
+                    <Droplets className="w-3 h-3 text-amber-500 dark:text-amber-400" /> Est. Loss Rate
                   </span>
                   <div>
-                    <span className="font-mono font-bold text-amber-400 text-sm">{selectedIncident.estimatedLossGpm} GPM</span>
-                    <span className="block text-[10px] text-slate-400 font-mono">${selectedIncident.estimatedDailyCost.toLocaleString()}/day</span>
+                    <span className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm">{selectedIncident.estimatedLossGpm} GPM</span>
+                    <span className="block text-[10px] text-slate-500 dark:text-slate-400 font-mono">${selectedIncident.estimatedDailyCost.toLocaleString()}/day</span>
                   </div>
                 </div>
               </div>
 
               {/* Technical Specifications Section */}
-              <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-3">
-                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-cyan-400" /> Technical & Infrastructure Specifications
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 space-y-3">
+                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> Technical & Infrastructure Specifications
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Suspected Pipe / Segment</span>
-                    <span className="font-semibold text-white text-xs mt-0.5 block truncate" title={selectedIncident.suspectedSegment}>
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase">Suspected Pipe / Segment</span>
+                    <span className="font-semibold text-slate-900 dark:text-white text-xs mt-0.5 block truncate" title={selectedIncident.suspectedSegment}>
                       {selectedIncident.suspectedSegment || 'Main Feeder Line'}
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Pipe Material & Size</span>
-                    <span className="font-semibold text-white text-xs mt-0.5 block">
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase">Pipe Material & Size</span>
+                    <span className="font-semibold text-slate-900 dark:text-white text-xs mt-0.5 block">
                       {selectedIncident.pipeDiameter} • {selectedIncident.pipeType}
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Repair Priority</span>
-                    <span className="font-mono font-bold text-amber-400 text-xs mt-0.5 block">
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase">Repair Priority</span>
+                    <span className="font-mono font-bold text-amber-600 dark:text-amber-400 text-xs mt-0.5 block">
                       Priority #{selectedIncident.repairPriority || 1}
                     </span>
                   </div>
@@ -450,21 +450,21 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
               </div>
 
               {/* Summary & Recommended Action */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
                 <div>
-                  <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-                    <Activity className="w-3.5 h-3.5 text-amber-400" /> Acoustic Sensor Anomaly Signature
+                  <h4 className="text-xs font-bold text-slate-800 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Activity className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> Acoustic Sensor Anomaly Signature
                   </h4>
-                  <p className="text-slate-300 mt-1 leading-relaxed text-xs">
+                  <p className="text-slate-700 dark:text-slate-300 mt-1 leading-relaxed text-xs">
                     {selectedIncident.summary}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80">
-                  <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> AI Recommended Action
+                <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80">
+                  <h4 className="text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> AI Recommended Action
                   </h4>
-                  <p className="text-slate-200 mt-1 leading-relaxed text-xs font-medium">
+                  <p className="text-slate-800 dark:text-slate-200 mt-1 leading-relaxed text-xs font-medium">
                     {selectedIncident.recommendedAction || selectedIncident.summary}
                   </p>
                 </div>
@@ -472,8 +472,8 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
             </div>
 
             {/* Action Footer Bar */}
-            <div className="p-4 bg-slate-950/90 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-0 z-10">
-              <span className="text-[11px] text-slate-400 font-medium self-start sm:self-auto">
+            <div className="p-4 bg-slate-50/90 dark:bg-slate-950/90 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-0 z-10">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium self-start sm:self-auto">
                 Update Status:
               </span>
 
@@ -483,7 +483,7 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
                   className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1.5 border ${
                     selectedIncident.status === 'ACKNOWLEDGED'
                       ? 'bg-indigo-600 text-white border-indigo-500 shadow-lg shadow-indigo-600/30'
-                      : 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/20'
+                      : 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/30 hover:bg-indigo-500/20'
                   }`}
                 >
                   <Check className="w-3.5 h-3.5" />
@@ -495,7 +495,7 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
                   className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1.5 border ${
                     selectedIncident.status === 'REPAIR_IN_PROGRESS'
                       ? 'bg-amber-600 text-white border-amber-500 shadow-lg shadow-amber-600/30'
-                      : 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
+                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
                   }`}
                 >
                   <Wrench className="w-3.5 h-3.5" />
@@ -507,7 +507,7 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
                   className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1.5 border ${
                     selectedIncident.status === 'RESOLVED'
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30'
-                      : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
+                      : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />

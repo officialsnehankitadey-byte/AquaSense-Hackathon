@@ -220,35 +220,35 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
           onClick={() => setSelectedPriority(null)}
         >
           <div 
-            className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-2xl text-slate-100 shadow-2xl relative overflow-hidden my-auto max-h-[90vh] flex flex-col"
+            className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-slate-100 shadow-2xl relative overflow-hidden my-auto max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="p-5 border-b border-slate-800 bg-slate-950/60 flex items-start justify-between gap-4 sticky top-0 z-10">
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 flex items-start justify-between gap-4 sticky top-0 z-10">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">
                     Priority Rank #{selectedPriority.rank}
                   </span>
                   {selectedPriority.incidentCode && (
-                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
                       ID: {selectedPriority.incidentCode}
                     </span>
                   )}
                   {getSeverityBadge(selectedPriority.severity)}
                   {getDispatchBadge(selectedPriority.dispatchStatus)}
                 </div>
-                <h3 className="text-base font-extrabold text-white mt-2 tracking-tight">
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white mt-2 tracking-tight">
                   {selectedPriority.location}
                 </h3>
-                <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                  <Layers className="w-3.5 h-3.5 text-cyan-400" />
+                <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                  <Layers className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                   {selectedPriority.dmaZone || 'DMA Network Zone'}
                 </p>
               </div>
               <button 
                 onClick={() => setSelectedPriority(null)}
-                className="text-slate-400 hover:text-white p-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 transition-colors"
+                className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-800 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -258,65 +258,65 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
             <div className="p-5 space-y-4 overflow-y-auto flex-1 text-xs">
               {/* Feedback Alert */}
               {feedbackMsg && (
-                <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-semibold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>{feedbackMsg}</span>
                 </div>
               )}
 
               {/* Grid 1: AI Diagnostics & Water Loss Metrics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">AI Confidence</span>
-                  <span className="font-mono font-bold text-white text-sm mt-0.5 block">{selectedPriority.confidence || 95}%</span>
+                <div className="p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block">AI Confidence</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white text-sm mt-0.5 block">{selectedPriority.confidence || 95}%</span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Est. Water Loss</span>
-                  <span className="font-mono font-bold text-red-400 text-sm mt-0.5 block">
+                <div className="p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Est. Water Loss</span>
+                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-sm mt-0.5 block">
                     {selectedPriority.estimatedLossGpm || 120} GPM
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Economic Loss</span>
-                  <span className="font-mono font-bold text-amber-400 text-sm mt-0.5 block">
+                <div className="p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Economic Loss</span>
+                  <span className="font-mono font-bold text-amber-600 dark:text-amber-400 text-sm mt-0.5 block">
                     -${selectedPriority.economicLossPerDay.toLocaleString()}/day
                   </span>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60">
-                  <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Risk Score</span>
-                  <span className="font-mono font-bold text-red-400 text-sm mt-0.5 block">
+                <div className="p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wider block">Risk Score</span>
+                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-sm mt-0.5 block">
                     {selectedPriority.structuralRiskScore}/100
                   </span>
                 </div>
               </div>
 
               {/* Target Isolation & Repair Logistics */}
-              <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 space-y-2.5">
-                <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                  <Wrench className="w-3.5 h-3.5 text-cyan-400" /> Target Isolation & Work Order Timing
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 space-y-2.5">
+                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                  <Wrench className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" /> Target Isolation & Work Order Timing
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Target Isolation Valve</span>
-                    <span className="font-semibold text-cyan-400 text-xs mt-0.5 block">
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase">Target Isolation Valve</span>
+                    <span className="font-semibold text-cyan-600 dark:text-cyan-400 text-xs mt-0.5 block">
                       {selectedPriority.targetValveToIsolate}
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Est. Repair Time</span>
-                    <span className="font-semibold text-white text-xs mt-0.5 block font-mono">
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase">Est. Repair Time</span>
+                    <span className="font-semibold text-slate-900 dark:text-white text-xs mt-0.5 block font-mono">
                       {selectedPriority.estimatedRepairHours} Hours
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                    <span className="text-[10px] text-slate-400 block uppercase">Payback / ROI Period</span>
-                    <span className="font-semibold text-emerald-400 text-xs mt-0.5 block font-mono">
+                  <div className="p-3 rounded-lg bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase">Payback / ROI Period</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400 text-xs mt-0.5 block font-mono">
                       {selectedPriority.roiDays} Days
                     </span>
                   </div>
@@ -324,19 +324,19 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
               </div>
 
               {/* Repair Priority Reason & Recommended Action */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5">
-                <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Priority Reason & Recommended AI Strategy
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2.5">
+                <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> Priority Reason & Recommended AI Strategy
                 </h4>
-                <p className="text-slate-200 leading-relaxed text-xs">
+                <p className="text-slate-700 dark:text-slate-200 leading-relaxed text-xs">
                   {selectedPriority.aiRecommendation}
                 </p>
               </div>
             </div>
 
             {/* Action Footer Bar */}
-            <div className="p-4 bg-slate-950/90 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-0 z-10">
-              <span className="text-[11px] text-slate-400 font-medium">
+            <div className="p-4 bg-slate-50/90 dark:bg-slate-950/90 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 sticky bottom-0 z-10">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                 Set Dispatch Work Order Status:
               </span>
 
@@ -346,7 +346,7 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
                   className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1 border ${
                     (selectedPriority.dispatchStatus || 'PENDING') === 'PENDING'
                       ? 'bg-amber-600 text-white border-amber-500 shadow-lg shadow-amber-600/30'
-                      : 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
+                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
                   }`}
                 >
                   <Clock className="w-3.5 h-3.5" />
@@ -358,7 +358,7 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
                   className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1 border ${
                     selectedPriority.dispatchStatus === 'DISPATCHED'
                       ? 'bg-cyan-600 text-white border-cyan-500 shadow-lg shadow-cyan-600/30'
-                      : 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20'
+                      : 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/30 hover:bg-cyan-500/20'
                   }`}
                 >
                   <UserCheck className="w-3.5 h-3.5" />
@@ -370,7 +370,7 @@ export const RepairPriorityCard: React.FC<RepairPriorityCardProps> = ({ prioriti
                   className={`py-2 px-3 rounded-xl font-semibold text-xs transition-all flex items-center justify-center gap-1 border ${
                     selectedPriority.dispatchStatus === 'COMPLETED'
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-600/30'
-                      : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
+                      : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
                   }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />

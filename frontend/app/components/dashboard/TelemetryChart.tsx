@@ -53,7 +53,7 @@ export const TelemetryChart: React.FC = () => {
       </div>
 
       {/* SVG Time Series Chart Container */}
-      <div className="relative w-full h-56 bg-slate-950/60 rounded-xl border border-slate-800 p-4 overflow-hidden">
+      <div className="relative w-full h-56 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800 p-4 overflow-hidden">
         {/* Background Grid Lines */}
         <div className="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none opacity-20">
           <div className="w-full border-b border-slate-500 border-dashed" />
