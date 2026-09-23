@@ -168,14 +168,14 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
 
       {/* Main Map GIS Canvas Viewport */}
       <div 
-        className="relative w-full h-[450px] md:h-[500px] bg-slate-950 overflow-hidden select-none"
+        className="relative w-full h-[450px] md:h-[500px] bg-slate-100 dark:bg-slate-950 overflow-hidden select-none border-t border-b border-slate-200 dark:border-slate-800 transition-colors duration-200"
         onClick={() => setSelectedNode(null)}
       >
         {/* Dark Grid Lines Overlay */}
         <div 
-          className="absolute inset-0 opacity-25 pointer-events-none transition-transform duration-300"
+          className="absolute inset-0 opacity-40 dark:opacity-25 pointer-events-none transition-transform duration-300"
           style={{
-            backgroundImage: `linear-gradient(to right, rgba(56, 189, 248, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(56, 189, 248, 0.15) 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(to right, rgba(2, 132, 199, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(2, 132, 199, 0.15) 1px, transparent 1px)`,
             backgroundSize: '40px 40px',
             transform: `scale(${zoomLevel})`,
             transformOrigin: 'center center',
@@ -361,10 +361,9 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
                   <text
                     y="-16"
                     textAnchor="middle"
-                    fill="#f8fafc"
                     fontSize="11"
                     fontWeight="700"
-                    className="font-mono pointer-events-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
+                    className="font-mono pointer-events-none fill-slate-900 dark:fill-slate-100 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
                   >
                     {node.name.split(' ')[0]}
                   </text>
@@ -373,7 +372,7 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
                   <text
                     y="24"
                     textAnchor="middle"
-                    fill={isCritical ? '#f87171' : isWarning ? '#fbbf24' : '#38bdf8'}
+                    fill={isCritical ? '#f87171' : isWarning ? '#fbbf24' : '#0284c7'}
                     fontSize="9"
                     fontWeight="600"
                     className="font-mono pointer-events-none drop-shadow-md"
@@ -390,13 +389,13 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
         {leakNode && (
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="absolute top-4 left-4 right-4 md:right-auto max-w-md px-3.5 py-2 rounded-xl bg-red-950/80 border border-red-500/50 backdrop-blur-md text-red-200 flex items-center justify-between gap-3 shadow-lg z-10 animate-pulse"
+            className="absolute top-4 left-4 right-4 md:right-auto max-w-md px-3.5 py-2 rounded-xl bg-red-100/90 dark:bg-red-950/80 border border-red-300 dark:border-red-500/50 backdrop-blur-md text-red-900 dark:text-red-200 flex items-center justify-between gap-3 shadow-lg z-10 animate-pulse"
           >
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 shrink-0" />
               <div className="text-xs">
-                <span className="font-bold text-white uppercase tracking-wider block">Suspected Leak Pinpointed</span>
-                <span className="text-[11px] text-red-300 font-mono">{leakNode.name} ({leakNode.zone})</span>
+                <span className="font-bold text-red-950 dark:text-white uppercase tracking-wider block">Suspected Leak Pinpointed</span>
+                <span className="text-[11px] text-red-800 dark:text-red-300 font-mono">{leakNode.name} ({leakNode.zone})</span>
               </div>
             </div>
             <button
