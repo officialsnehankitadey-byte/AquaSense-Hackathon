@@ -40,6 +40,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'settings', label: 'System Settings', icon: Settings },
   ];
 
+  // Close mobile sidebar on Escape key press
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileOpen) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileOpen, setMobileOpen]);
+
   return (
     <>
       {/* Mobile Backdrop */}
@@ -47,10 +58,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div 
           className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
         />
       )}
 
       <aside
+        aria-label="Sidebar Navigation"
         className={`fixed top-0 left-0 bottom-0 z-50 w-64 bg-slate-900 dark:bg-slate-950 text-slate-100 border-r border-slate-800 transform transition-transform duration-200 ease-in-out flex flex-col ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
@@ -74,6 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={() => setMobileOpen(false)}
             className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 lg:hidden"
             aria-label="Close sidebar"
@@ -114,6 +128,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             return (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => {
                   setActiveTab(item.id);
                   setMobileOpen(false);
