@@ -13,7 +13,11 @@ import {
   Search, 
   Filter, 
   Zap,
-  Clock
+  Clock,
+  Settings,
+  RefreshCw,
+  X,
+  ShieldCheck
 } from 'lucide-react';
 import { mockNetworkNodes } from '../../data/mockData';
 import { NetworkNode } from '../../types/dashboard';
@@ -22,6 +26,9 @@ export const SensorFleetView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
+  const [selectedSensor, setSelectedSensor] = useState<NetworkNode | null>(null);
+  const [isCalibrating, setIsCalibrating] = useState(false);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const filteredSensors = mockNetworkNodes.filter((sensor) => {
     const matchesSearch = 
@@ -40,6 +47,15 @@ export const SensorFleetView: React.FC = () => {
   const warningSensors = mockNetworkNodes.filter(s => s.status === 'WARNING').length;
   const criticalSensors = mockNetworkNodes.filter(s => s.status === 'CRITICAL').length;
 
+  const triggerCalibration = (sensor: NetworkNode, type: string) => {
+    setIsCalibrating(true);
+    setTimeout(() => {
+      setIsCalibrating(false);
+      setToastMsg(`Remote ${type} trigger completed successfully for device ${sensor.name} (${sensor.id})`);
+      setTimeout(() => setToastMsg(null), 4000);
+    }, 1200);
+  };
+
   return (
     <div className="space-y-6">
       {/* View Header */}
@@ -47,17 +63,28 @@ export const SensorFleetView: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Sensor Fleet Telemetry & Device Health
+              Sensor Fleet Telemetry & Device Calibration
             </h1>
             <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
               {totalSensors} Fleet Nodes
             </span>
           </div>
           <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Real-time status, battery levels, sampling frequencies, and signal telemetry of deployed hydro-acoustic nodes.
+            Real-time status, battery levels, sampling frequencies, transducer zero-point calibration, and remote pings.
           </p>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toastMsg && (
+        <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-semibold text-xs flex items-center justify-between gap-2 animate-fadeIn shadow-md">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+            <span>{toastMsg}</span>
+          </div>
+          <span className="text-[10px] font-mono text-emerald-400">CALIBRATED</span>
+        </div>
+      )}
 
       {/* Fleet Stats Overview Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -161,7 +188,8 @@ export const SensorFleetView: React.FC = () => {
                 <th className="py-3 px-3">Telemetry Reading</th>
                 <th className="py-3 px-3">Battery</th>
                 <th className="py-3 px-3">Last Ping</th>
-                <th className="py-3 px-3 text-right">Status</th>
+                <th className="py-3 px-3">Status</th>
+                <th className="py-3 px-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
@@ -204,7 +232,7 @@ export const SensorFleetView: React.FC = () => {
                   <td className="py-3 px-3 text-slate-500 dark:text-slate-400 font-mono">
                     {node.lastPing || 'Just now'}
                   </td>
-                  <td className="py-3 px-3 text-right">
+                  <td className="py-3 px-3">
                     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold ${
                       node.status === 'CRITICAL'
                         ? 'bg-red-500/15 text-red-500 border border-red-500/30'
@@ -218,12 +246,103 @@ export const SensorFleetView: React.FC = () => {
                       {node.status}
                     </span>
                   </td>
+                  <td className="py-3 px-3 text-right">
+                    <button
+                      onClick={() => setSelectedSensor(node)}
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500/20 text-slate-700 dark:text-slate-300 hover:text-cyan-400 transition-all font-semibold text-xs flex items-center gap-1 ml-auto"
+                    >
+                      <Settings className="w-3.5 h-3.5" />
+                      <span>Calibrate</span>
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Sensor Calibration & Telecommand Modal */}
+      {selectedSensor && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setSelectedSensor(null)}
+        >
+          <div 
+            className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-slate-100 shadow-2xl p-5 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-500">
+                  <Settings className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Device Diagnostics & Calibration</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{selectedSensor.name} ({selectedSensor.id})</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedSensor(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-slate-100 dark:bg-slate-800"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] text-slate-400 block">Battery Level</span>
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">{selectedSensor.batteryLevel || 95}%</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-slate-400 block">DMA Zone</span>
+                  <span className="font-mono font-bold text-cyan-500">{selectedSensor.zone}</span>
+                </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <button
+                  onClick={() => triggerCalibration(selectedSensor, 'Transducer Zero-Point Calibration')}
+                  disabled={isCalibrating}
+                  className="w-full p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500/20 text-slate-900 dark:text-white font-semibold flex items-center justify-between border border-slate-200 dark:border-slate-700/60 transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <RefreshCw className={`w-4 h-4 text-cyan-500 ${isCalibrating ? 'animate-spin' : ''}`} />
+                    <span>Zero-Point Transducer Recalibration</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-cyan-400 uppercase">EXECUTE</span>
+                </button>
+
+                <button
+                  onClick={() => triggerCalibration(selectedSensor, 'Hydrophone FFT Sensitivity Tuning')}
+                  disabled={isCalibrating}
+                  className="w-full p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500/20 text-slate-900 dark:text-white font-semibold flex items-center justify-between border border-slate-200 dark:border-slate-700/60 transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <Radio className="w-4 h-4 text-purple-500" />
+                    <span>Hydrophone Acoustic FFT Sensitivity Tuning</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-purple-400 uppercase">EXECUTE</span>
+                </button>
+
+                <button
+                  onClick={() => triggerCalibration(selectedSensor, 'Diagnostic Hardware Ping')}
+                  disabled={isCalibrating}
+                  className="w-full p-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-cyan-500/20 text-slate-900 dark:text-white font-semibold flex items-center justify-between border border-slate-200 dark:border-slate-700/60 transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-amber-500" />
+                    <span>Send Immediate Telemetry Diagnostic Ping</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-amber-400 uppercase">PING</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
