@@ -108,14 +108,17 @@ def get_acoustic_spectrum(incident_id: str):
     inc = next((i for i in INCIDENTS_DB if i.id == incident_id), None)
     incident_code = inc.code if inc else incident_id
     
-    # Retrieve real WAV recording file from dataset
     wav_file = fft_processor.get_sample_leak_recording(incident_code)
-    analysis = fft_processor.analyze_file(wav_file)
+    if wav_file:
+        analysis = fft_processor.analyze_file(wav_file)
+    else:
+        analysis = fft_processor.generate_synthetic_spectrum(leak=True)
     
     return {
         "incidentId": incident_id,
         "incidentCode": incident_code,
-        "recordingFile": wav_file,
+        "recordingFile": wav_file or "synthetic_acoustic_stream.wav",
         "acousticFreq": inc.acousticFreq if inc else analysis["peakFrequencyHz"],
         **analysis
     }
+

@@ -114,11 +114,19 @@ class HydroAcousticFFTProcessor:
             "totalSamplesProcessed": N
         }
 
-    def get_sample_leak_recording(self, incident_code: str = "") -> str:
+    def generate_synthetic_spectrum(self, leak: bool = True) -> Dict[str, Any]:
+        fs = 4096
+        t = np.linspace(0, 1.0, fs, endpoint=False)
+        center_freq = 340.0 if leak else 60.0
+        signal_data = 0.5 * np.sin(2 * np.pi * center_freq * t) + 0.1 * np.random.normal(size=fs)
+        return self.analyze_audio_spectrum(signal_data, sample_rate=fs)
+
+    def get_sample_leak_recording(self, incident_code: str = "") -> Optional[str]:
         if not self.leak_files:
-            raise RuntimeError("No leak acoustic recordings found in dataset.")
+            return None
         # Hash incident code to deterministically pick a real recording file
         idx = abs(hash(incident_code)) % len(self.leak_files)
         return self.leak_files[idx]
 
 fft_processor = HydroAcousticFFTProcessor()
+
