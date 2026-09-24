@@ -13,6 +13,7 @@ import { SensorFleetView } from './components/views/SensorFleetView';
 import { FlowPressureView } from './components/views/FlowPressureView';
 import { NRWReportsView } from './components/views/NRWReportsView';
 import { SystemSettingsView } from './components/views/SystemSettingsView';
+import { DemoControlBar } from './components/dashboard/DemoControlBar';
 import { useTelemetry } from './hooks/useTelemetry';
 import { useIncidents } from './hooks/useIncidents';
 import { useSensors } from './hooks/useSensors';
@@ -127,6 +128,13 @@ export default function DashboardPage() {
 
       {/* Main Dashboard Layout */}
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
+        {/* Hackathon Presenter Demo Control Toolbar */}
+        <DemoControlBar
+          onInjectBurst={() => handleRefresh()}
+          onSimulateRepair={() => handleRefresh()}
+          onResetGrid={() => handleRefresh()}
+        />
+
         {/* Top Header */}
         <Header
           onMenuClick={() => setMobileOpen(true)}

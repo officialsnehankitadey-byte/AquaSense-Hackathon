@@ -78,7 +78,7 @@
 ---
 
 ### Task 5: UX Polish, Micro-Animations & Hackathon Demo Controls
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Add UI micro-animations, refine visual contrast, polish responsive layout styling, and build a top-header "Demo Control Bar" allowing presenters to trigger live events (e.g. "Inject Pipe Burst", "Simulate Repair Verification", "Reset SCADA").
 - **Dependencies**: Member 1 Task 4, Member 2 Task 5 (Demo API endpoints).
 - **Files / Area Involved**:
