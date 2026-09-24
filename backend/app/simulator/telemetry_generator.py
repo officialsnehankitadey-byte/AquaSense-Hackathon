@@ -347,4 +347,27 @@ class SCADATelemetrySimulator:
             },
         ]
 
+    def get_pipes(self) -> List[Dict[str, Any]]:
+        sensor_list = [n for n in self.nodes_state.values() if not n["id"].startswith("node-")]
+        pipes = []
+        for i in range(len(sensor_list) - 1):
+            n1 = sensor_list[i]
+            n2 = sensor_list[i+1]
+            is_leak = n1["status"] == "CRITICAL" or n2["status"] == "CRITICAL"
+            is_warning = n1["status"] == "WARNING" or n2["status"] == "WARNING"
+            
+            status = "LEAK_DETECTED" if is_leak else ("HIGH_PRESSURE" if is_warning else "NORMAL")
+            pipes.append({
+                "id": f"pipe-{i+1}",
+                "fromNodeId": n1["id"],
+                "toNodeId": n2["id"],
+                "status": status,
+                "flowDirection": "FORWARD",
+                "diameterInches": 18 if is_leak else 16,
+                "lengthMeters": 450,
+                "flowRateGpm": max(n1["flowGpm"], n2["flowGpm"])
+            })
+        return pipes
+
 simulator = SCADATelemetrySimulator()
+
