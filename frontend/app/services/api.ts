@@ -40,14 +40,13 @@ async function fetchWithFallback<T>(endpoint: string, fallbackData: T): Promise<
 
     return await response.json();
   } catch (error) {
-    // Graceful fallback to mock data when backend is unreachable
     return fallbackData;
   }
 }
 
 export const apiService = {
   async getKPIs(): Promise<KPIMetric[]> {
-    return fetchWithFallback('/kpis', mockKPIs);
+    return fetchWithFallback('/telemetry/kpis', mockKPIs);
   },
 
   async getIncidents(): Promise<Incident[]> {
@@ -65,17 +64,17 @@ export const apiService = {
         return await response.json();
       }
     } catch (err) {
-      // Fallback response for offline mode
+      // Fallback
     }
     return { success: true };
   },
 
   async getNetworkNodes(): Promise<NetworkNode[]> {
-    return fetchWithFallback('/network/nodes', mockNetworkNodes);
+    return fetchWithFallback('/telemetry/nodes', mockNetworkNodes);
   },
 
   async getPipeSegments(): Promise<PipeSegment[]> {
-    return fetchWithFallback('/network/pipes', mockPipeSegments);
+    return fetchWithFallback('/telemetry/pipes', mockPipeSegments);
   },
 
   async getRepairPriorities(): Promise<RepairPriorityItem[]> {
@@ -83,7 +82,7 @@ export const apiService = {
   },
 
   async getDMAZones(): Promise<DMAZone[]> {
-    return fetchWithFallback('/zones', mockDMAZones);
+    return fetchWithFallback('/telemetry/dma-zones', mockDMAZones);
   },
 
   async getRepairVerifications(): Promise<RepairVerification[]> {
@@ -92,13 +91,14 @@ export const apiService = {
 
   async setPRVPressure(nodeId: string, pressurePsi: number): Promise<{ success: boolean; newPressure: number }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/network/nodes/${nodeId}/prv`, {
+      const response = await fetch(`${API_BASE_URL}/sensors/prv/adjust`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pressurePsi }),
+        body: JSON.stringify({ nodeId, targetPressurePsi: pressurePsi }),
       });
       if (response.ok) {
-        return await response.json();
+        const data = await response.json();
+        return { success: true, newPressure: data.updatedNode?.pressurePsi || pressurePsi };
       }
     } catch (err) {
       // Fallback
@@ -111,7 +111,7 @@ export const apiService = {
       const response = await fetch(`${API_BASE_URL}/incidents/${incidentId}/dispatch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ assignedCrew: crewName }),
+        body: JSON.stringify({ crewName }),
       });
       if (response.ok) {
         return await response.json();
@@ -120,5 +120,23 @@ export const apiService = {
       // Fallback
     }
     return { success: true, status: 'DISPATCHED' };
+  },
+
+  async triggerDemoBurst(): Promise<any> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/demo/trigger-burst`, { method: 'POST' });
+      return await response.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  async resetDemo(): Promise<any> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/demo/reset`, { method: 'POST' });
+      return await response.json();
+    } catch (e) {
+      return null;
+    }
   }
 };

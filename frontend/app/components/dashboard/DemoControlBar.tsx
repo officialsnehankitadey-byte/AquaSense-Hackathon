@@ -6,10 +6,8 @@ import {
   Flame, 
   Wrench, 
   RotateCcw, 
-  Activity, 
   CheckCircle2, 
-  Sparkles,
-  Play
+  Sparkles
 } from 'lucide-react';
 import { apiService } from '../../services/api';
 
@@ -27,11 +25,42 @@ export const DemoControlBar: React.FC<DemoControlBarProps> = ({
   const [activeScenario, setActiveScenario] = useState<string | null>(null);
   const [toastFeedback, setToastFeedback] = useState<string | null>(null);
 
-  const triggerScenario = async (name: string, action?: () => void) => {
-    setActiveScenario(name);
-    if (action) action();
+  const handleBurst = async () => {
+    setActiveScenario('burst');
+    await apiService.triggerDemoBurst();
+    if (onInjectBurst) onInjectBurst();
+    setToastFeedback('Pipe Burst Injected! (Node n679 Pressure Dropped to 24.1 PSI)');
+    setTimeout(() => {
+      setActiveScenario(null);
+      setToastFeedback(null);
+    }, 4000);
+  };
 
-    setToastFeedback(`Demo Event Triggered: "${name}"`);
+  const handleReset = async () => {
+    setActiveScenario('reset');
+    await apiService.resetDemo();
+    if (onResetGrid) onResetGrid();
+    setToastFeedback('SCADA Network Reset to Baseline Optimal State');
+    setTimeout(() => {
+      setActiveScenario(null);
+      setToastFeedback(null);
+    }, 4000);
+  };
+
+  const handleRepair = async () => {
+    setActiveScenario('repair');
+    if (onSimulateRepair) onSimulateRepair();
+    setToastFeedback('Repair Verified: Pressure restored to 64.8 PSI baseline');
+    setTimeout(() => {
+      setActiveScenario(null);
+      setToastFeedback(null);
+    }, 4000);
+  };
+
+  const handlePulse = () => {
+    setActiveScenario('pulse');
+    if (onInjectBurst) onInjectBurst();
+    setToastFeedback('1Hz SCADA Telemetry Stream Refresh Triggered');
     setTimeout(() => {
       setActiveScenario(null);
       setToastFeedback(null);
@@ -55,7 +84,7 @@ export const DemoControlBar: React.FC<DemoControlBarProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           {/* Burst Inject Button */}
           <button
-            onClick={() => triggerScenario('Pipe Burst Injection (240 GPM Loss)', onInjectBurst)}
+            onClick={handleBurst}
             disabled={activeScenario !== null}
             className="px-2.5 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
             title="Inject simulated pipe burst leak"
@@ -66,7 +95,7 @@ export const DemoControlBar: React.FC<DemoControlBarProps> = ({
 
           {/* Repair Verification Button */}
           <button
-            onClick={() => triggerScenario('Repair Verified (Water Saved: 145,000 L/day)', onSimulateRepair)}
+            onClick={handleRepair}
             disabled={activeScenario !== null}
             className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
             title="Simulate successful repair verification"
@@ -77,7 +106,7 @@ export const DemoControlBar: React.FC<DemoControlBarProps> = ({
 
           {/* Telemetry Pulse */}
           <button
-            onClick={() => triggerScenario('1Hz Telemetry Pulse Stream Broadcast')}
+            onClick={handlePulse}
             disabled={activeScenario !== null}
             className="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
             title="Trigger high-frequency sensor update"
@@ -88,7 +117,7 @@ export const DemoControlBar: React.FC<DemoControlBarProps> = ({
 
           {/* Reset Grid */}
           <button
-            onClick={() => triggerScenario('SCADA Network Reset', onResetGrid)}
+            onClick={handleReset}
             disabled={activeScenario !== null}
             className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-semibold transition-all flex items-center gap-1 active:scale-95 disabled:opacity-50"
             title="Reset telemetry & incidents to baseline"

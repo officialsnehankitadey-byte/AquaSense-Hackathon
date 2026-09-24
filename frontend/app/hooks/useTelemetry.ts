@@ -9,24 +9,33 @@ export function useTelemetry() {
   const [kpis, setKpis] = useState<KPIMetric[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Load initial KPIs from API / Fallback
-    apiService.getKPIs().then(data => {
+  const refreshKPIs = async () => {
+    const data = await apiService.getKPIs();
+    if (data && data.length > 0) {
       setKpis(data);
-      setIsLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    refreshKPIs().then(() => setIsLoading(false));
 
     // Subscribe to live telemetry stream
     const unsubscribe = telemetryWS.subscribe((data) => {
       setLatestTelemetry(data);
       setTelemetryHistory(prev => {
         const updated = [...prev, data];
-        return updated.slice(-20); // Keep last 20 ticks for telemetry charts
+        return updated.slice(-25); // Keep last 25 ticks for dynamic live chart
       });
     });
 
+    // Periodically refresh KPIs every 3 seconds to capture live SCADA variations
+    const intervalId = setInterval(() => {
+      refreshKPIs();
+    }, 3000);
+
     return () => {
       unsubscribe();
+      clearInterval(intervalId);
     };
   }, []);
 
@@ -35,9 +44,6 @@ export function useTelemetry() {
     latestTelemetry,
     kpis,
     isLoading,
-    refreshKPIs: async () => {
-      const data = await apiService.getKPIs();
-      setKpis(data);
-    }
+    refreshKPIs
   };
 }

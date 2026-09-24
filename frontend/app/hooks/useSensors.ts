@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiService } from '../services/api';
+import { telemetryWS, TelemetryData } from '../services/websocket';
 import { NetworkNode, PipeSegment } from '../types/dashboard';
 
 export function useSensors(selectedZone: string = 'all') {
@@ -7,14 +8,44 @@ export function useSensors(selectedZone: string = 'all') {
   const [pipes, setPipes] = useState<PipeSegment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchNodesAndPipes = async () => {
+    const [nodesData, pipesData] = await Promise.all([
+      apiService.getNetworkNodes(),
+      apiService.getPipeSegments()
+    ]);
+    if (nodesData && nodesData.length > 0) {
+      setNodes(nodesData);
+    }
+    if (pipesData && pipesData.length > 0) {
+      setPipes(pipesData);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    Promise.all([apiService.getNetworkNodes(), apiService.getPipeSegments()]).then(
-      ([nodesData, pipesData]) => {
-        setNodes(nodesData);
-        setPipes(pipesData);
+    fetchNodesAndPipes();
+
+    // Subscribe to live WebSocket nodes stream
+    const unsubscribe = telemetryWS.subscribe((data: TelemetryData) => {
+      if (data.nodes && data.nodes.length > 0) {
+        setNodes(data.nodes);
         setIsLoading(false);
       }
-    );
+    });
+
+    // Fallback polling every 2 seconds
+    const intervalId = setInterval(() => {
+      apiService.getNetworkNodes().then(liveNodes => {
+        if (liveNodes && liveNodes.length > 0) {
+          setNodes(liveNodes);
+        }
+      });
+    }, 2000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(intervalId);
+    };
   }, []);
 
   const updatePRV = async (nodeId: string, setpointPsi: number) => {
@@ -22,6 +53,7 @@ export function useSensors(selectedZone: string = 'all') {
       prev.map(node => (node.id === nodeId ? { ...node, pressurePsi: setpointPsi } : node))
     );
     await apiService.setPRVPressure(nodeId, setpointPsi);
+    fetchNodesAndPipes();
   };
 
   const filteredNodes = nodes.filter(node => {
@@ -34,6 +66,7 @@ export function useSensors(selectedZone: string = 'all') {
     allNodes: nodes,
     pipes,
     isLoading,
-    updatePRV
+    updatePRV,
+    refreshSensors: fetchNodesAndPipes
   };
 }
