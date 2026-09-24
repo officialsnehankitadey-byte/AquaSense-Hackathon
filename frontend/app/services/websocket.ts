@@ -12,7 +12,35 @@ export interface TelemetryData {
 
 type TelemetryCallback = (data: TelemetryData) => void;
 
-const WS_BASE_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws/telemetry';
+export function getWsBaseUrl(): string {
+  let envUrl = process.env.NEXT_PUBLIC_WS_URL;
+
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host.includes('onrender.com')) {
+      const backendHost = host.replace('aquasense-frontend', 'aquasense-backend');
+      return `wss://${backendHost}/ws/telemetry`;
+    }
+  }
+
+  if (!envUrl) {
+    return 'ws://localhost:8000/ws/telemetry';
+  }
+
+  if (!envUrl.startsWith('ws://') && !envUrl.startsWith('wss://')) {
+    const proto = envUrl.startsWith('https://') ? 'wss://' : 'ws://';
+    envUrl = envUrl.replace(/^https?:\/\//, proto);
+    if (!envUrl.startsWith('ws://') && !envUrl.startsWith('wss://')) {
+      envUrl = `wss://${envUrl}`;
+    }
+  }
+
+  envUrl = envUrl.replace(/\/+$/, '');
+  if (!envUrl.endsWith('/ws/telemetry')) {
+    envUrl = `${envUrl}/ws/telemetry`;
+  }
+  return envUrl;
+}
 
 export class TelemetryWebSocketService {
   private ws: WebSocket | null = null;
@@ -26,7 +54,8 @@ export class TelemetryWebSocketService {
     if (typeof window === 'undefined') return;
 
     try {
-      this.ws = new WebSocket(WS_BASE_URL);
+      const wsUrl = getWsBaseUrl();
+      this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
         this.isConnected = true;

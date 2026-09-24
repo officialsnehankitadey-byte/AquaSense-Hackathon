@@ -18,14 +18,39 @@ import {
   mockRepairVerifications 
 } from '../data/mockData';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+export function getApiBaseUrl(): string {
+  let envUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host.includes('onrender.com')) {
+      const backendHost = host.replace('aquasense-frontend', 'aquasense-backend');
+      return `https://${backendHost}/api`;
+    }
+  }
+
+  if (!envUrl) {
+    return 'http://localhost:8000/api';
+  }
+
+  if (!envUrl.startsWith('http://') && !envUrl.startsWith('https://')) {
+    envUrl = `https://${envUrl}`;
+  }
+
+  envUrl = envUrl.replace(/\/+$/, '');
+  if (!envUrl.endsWith('/api')) {
+    envUrl = `${envUrl}/api`;
+  }
+  return envUrl;
+}
 
 async function fetchWithFallback<T>(endpoint: string, fallbackData: T): Promise<T> {
+  const baseUrl = getApiBaseUrl();
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
     
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -54,8 +79,9 @@ export const apiService = {
   },
 
   async updateIncidentStatus(incidentId: string, status: IncidentStatus): Promise<{ success: boolean }> {
+    const baseUrl = getApiBaseUrl();
     try {
-      const response = await fetch(`${API_BASE_URL}/incidents/${incidentId}/status`, {
+      const response = await fetch(`${baseUrl}/incidents/${incidentId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -90,8 +116,9 @@ export const apiService = {
   },
 
   async setPRVPressure(nodeId: string, pressurePsi: number): Promise<{ success: boolean; newPressure: number }> {
+    const baseUrl = getApiBaseUrl();
     try {
-      const response = await fetch(`${API_BASE_URL}/sensors/prv/adjust`, {
+      const response = await fetch(`${baseUrl}/sensors/prv/adjust`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nodeId, targetPressurePsi: pressurePsi }),
@@ -107,8 +134,9 @@ export const apiService = {
   },
 
   async dispatchCrew(incidentId: string, crewName: string): Promise<{ success: boolean; status: IncidentStatus }> {
+    const baseUrl = getApiBaseUrl();
     try {
-      const response = await fetch(`${API_BASE_URL}/incidents/${incidentId}/dispatch`, {
+      const response = await fetch(`${baseUrl}/incidents/${incidentId}/dispatch`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ crewName }),
@@ -123,8 +151,9 @@ export const apiService = {
   },
 
   async triggerDemoBurst(): Promise<any> {
+    const baseUrl = getApiBaseUrl();
     try {
-      const response = await fetch(`${API_BASE_URL}/demo/trigger-burst`, { method: 'POST' });
+      const response = await fetch(`${baseUrl}/demo/trigger-burst`, { method: 'POST' });
       return await response.json();
     } catch (e) {
       return null;
@@ -132,8 +161,9 @@ export const apiService = {
   },
 
   async resetDemo(): Promise<any> {
+    const baseUrl = getApiBaseUrl();
     try {
-      const response = await fetch(`${API_BASE_URL}/demo/reset`, { method: 'POST' });
+      const response = await fetch(`${baseUrl}/demo/reset`, { method: 'POST' });
       return await response.json();
     } catch (e) {
       return null;
