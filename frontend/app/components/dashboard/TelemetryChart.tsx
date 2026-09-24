@@ -4,20 +4,25 @@ import React from 'react';
 import { Activity, Gauge, TrendingUp, Radio } from 'lucide-react';
 import { mockTelemetryHistory } from '../../data/mockData';
 
-export const TelemetryChart: React.FC = () => {
+interface TelemetryChartProps {
+  telemetryData?: { time: string; actualGpm: number; baselineGpm: number; acousticDb: number; pressurePsi: number }[];
+}
+
+export const TelemetryChart: React.FC<TelemetryChartProps> = ({ telemetryData }) => {
+  const dataToRender = telemetryData && telemetryData.length > 0 ? telemetryData : mockTelemetryHistory;
+
   // Compute max values for dynamic SVG scaling
   const maxGpm = 2500;
   const minGpm = 500;
-  const maxDb = 100;
 
-  const pointsBaseline = mockTelemetryHistory.map((d, i) => {
-    const x = (i / (mockTelemetryHistory.length - 1)) * 100;
+  const pointsBaseline = dataToRender.map((d, i) => {
+    const x = (i / Math.max(1, dataToRender.length - 1)) * 100;
     const y = 100 - ((d.baselineGpm - minGpm) / (maxGpm - minGpm)) * 80 - 10;
     return `${x},${y}`;
   }).join(' ');
 
-  const pointsActual = mockTelemetryHistory.map((d, i) => {
-    const x = (i / (mockTelemetryHistory.length - 1)) * 100;
+  const pointsActual = dataToRender.map((d, i) => {
+    const x = (i / Math.max(1, dataToRender.length - 1)) * 100;
     const y = 100 - ((d.actualGpm - minGpm) / (maxGpm - minGpm)) * 80 - 10;
     return `${x},${y}`;
   }).join(' ');
@@ -88,8 +93,8 @@ export const TelemetryChart: React.FC = () => {
 
         {/* Hour Labels */}
         <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-2">
-          {mockTelemetryHistory.map((item) => (
-            <span key={item.time}>{item.time}</span>
+          {dataToRender.map((item, idx) => (
+            <span key={item.time + '-' + idx}>{item.time}</span>
           ))}
         </div>
       </div>

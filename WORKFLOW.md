@@ -33,7 +33,7 @@
 ---
 
 ### Task 2: API Integration Layer & Real-Time Data Connectors
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Create modular API service layer (`axios`/`fetch`) and custom React hooks (`useTelemetry`, `useIncidents`, `useSensors`, `useRepairs`) supporting live backend REST endpoints and WebSocket stream data, with smooth fallback to local mock data.
 - **Dependencies**: Member 2 Task 2 (REST API & WebSocket endpoints).
 - **Files / Area Involved**:

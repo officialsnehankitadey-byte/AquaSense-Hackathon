@@ -13,16 +13,19 @@ import { SensorFleetView } from './components/views/SensorFleetView';
 import { FlowPressureView } from './components/views/FlowPressureView';
 import { NRWReportsView } from './components/views/NRWReportsView';
 import { SystemSettingsView } from './components/views/SystemSettingsView';
+import { useTelemetry } from './hooks/useTelemetry';
+import { useIncidents } from './hooks/useIncidents';
+import { useSensors } from './hooks/useSensors';
+import { useRepairs } from './hooks/useRepairs';
 import { 
   mockKPIs, 
-  mockIncidents, 
   mockNetworkNodes, 
   mockPipeSegments, 
   mockRepairPriorities, 
   mockDMAZones,
   mockRepairVerifications
 } from './data/mockData';
-import { Incident, IncidentStatus } from './types/dashboard';
+import { IncidentStatus } from './types/dashboard';
 
 const VALID_TABS = [
   'dashboard',
@@ -42,7 +45,17 @@ export default function DashboardPage() {
   const [selectedZone, setSelectedZone] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [incidents, setIncidents] = useState<Incident[]>(mockIncidents);
+
+  // Modular API Service Hooks
+  const { kpis, telemetryHistory, refreshKPIs } = useTelemetry();
+  const { incidents, updateStatus, refreshIncidents } = useIncidents(selectedZone, searchQuery);
+  const { nodes, pipes } = useSensors(selectedZone);
+  const { priorities, verifications } = useRepairs();
+
+  // Dynamic KPI list with live fallback
+  const currentKPIs = kpis.length > 0 ? kpis : mockKPIs;
+  const currentPriorities = priorities.length > 0 ? priorities : mockRepairPriorities;
+  const currentVerifications = verifications.length > 0 ? verifications : mockRepairVerifications;
 
   // Synchronize URL query parameter with active tab state
   useEffect(() => {
@@ -80,38 +93,27 @@ export default function DashboardPage() {
     }
   }, [darkMode]);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
+    await Promise.all([refreshKPIs(), refreshIncidents()]);
     setTimeout(() => {
       setIsRefreshing(false);
-    }, 1000);
+    }, 600);
   };
 
   const handleUpdateIncidentStatus = (incidentId: string, newStatus: IncidentStatus) => {
-    setIncidents(prev =>
-      prev.map(inc => (inc.id === incidentId ? { ...inc, status: newStatus } : inc))
-    );
+    updateStatus(incidentId, newStatus);
   };
 
-  // Filtered incidents based on search & DMA zone
-  const filteredIncidents = incidents.filter((inc) => {
-    const matchesSearch = 
-      inc.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.dmaZone.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesZone = selectedZone === 'all' || inc.dmaZone.toLowerCase().includes(selectedZone.toLowerCase());
-
-    return matchesSearch && matchesZone;
-  });
-
-  // Filtered nodes based on zone
-  const filteredNodes = mockNetworkNodes.filter((node) => {
+  // Filtered nodes based on zone fallback
+  const activeNodes = nodes.length > 0 ? nodes : mockNetworkNodes.filter((node) => {
     if (selectedZone === 'all') return true;
     const targetZoneObj = mockDMAZones.find(z => z.id === selectedZone);
     if (!targetZoneObj) return true;
     return node.zone === targetZoneObj.name.split(' ')[0];
   });
+
+  const activePipes = pipes.length > 0 ? pipes : mockPipeSegments;
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-[#090d16] text-slate-900 dark:text-slate-100 flex transition-colors duration-200">
@@ -161,30 +163,36 @@ export default function DashboardPage() {
               </div>
 
               {/* KPI Cards Section */}
-              <KPISection metrics={mockKPIs} />
+              <KPISection metrics={currentKPIs} />
 
               {/* Network GIS Topology Map Section */}
-              <NetworkTopologyMap nodes={filteredNodes} pipes={mockPipeSegments} />
+              <NetworkTopologyMap nodes={activeNodes} pipes={activePipes} />
 
               {/* Grid Layout: Active Incidents & Repair Priority Matrix */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
                   {/* Telemetry Chart */}
-                  <TelemetryChart />
+                  <TelemetryChart telemetryData={telemetryHistory.map(t => ({
+                    time: t.timestamp,
+                    actualGpm: t.flowRateGpm,
+                    baselineGpm: 1500,
+                    acousticDb: t.acousticDb,
+                    pressurePsi: t.avgPressurePsi,
+                  }))} />
                   
                   {/* Incidents Log */}
                   <IncidentsList 
-                    incidents={filteredIncidents} 
+                    incidents={incidents} 
                     onUpdateIncidentStatus={handleUpdateIncidentStatus}
                   />
                 </div>
 
                 <div className="lg:col-span-1 space-y-6">
                   {/* Repair Priority Section */}
-                  <RepairPriorityCard priorities={mockRepairPriorities} />
+                  <RepairPriorityCard priorities={currentPriorities} />
 
                   {/* Repair Verification Section */}
-                  <RepairVerificationCard verifications={mockRepairVerifications} />
+                  <RepairVerificationCard verifications={currentVerifications} />
                 </div>
               </div>
             </>
@@ -202,7 +210,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
               </div>
-              <NetworkTopologyMap nodes={filteredNodes} pipes={mockPipeSegments} />
+              <NetworkTopologyMap nodes={activeNodes} pipes={activePipes} />
             </div>
           )}
 
@@ -219,7 +227,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <IncidentsList 
-                incidents={filteredIncidents} 
+                incidents={incidents} 
                 onUpdateIncidentStatus={handleUpdateIncidentStatus}
               />
             </div>
@@ -242,8 +250,8 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <RepairPriorityCard priorities={mockRepairPriorities} />
-                <RepairVerificationCard verifications={mockRepairVerifications} />
+                <RepairPriorityCard priorities={currentPriorities} />
+                <RepairVerificationCard verifications={currentVerifications} />
               </div>
             </div>
           )}
