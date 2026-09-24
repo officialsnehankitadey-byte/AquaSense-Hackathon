@@ -94,7 +94,7 @@
 ## ⚡ Member 2: Backend & AI Development Roadmap
 
 ### Task 1: Repository Setup, Database Schema & SCADA Telemetry Simulator
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Initialize Python FastAPI service in `/backend`, design database models (SQLAlchemy/SQLModel) for DMA zones, pipe segments, hydrophones, telemetry logs, and incidents, and implement a background 1Hz telemetry stream generator.
 - **Dependencies**: None.
 - **Files / Area Involved**:
@@ -110,7 +110,7 @@
 ---
 
 ### Task 2: REST & WebSocket Telemetry Gateway APIs
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Implement RESTful CRUD endpoints for network nodes, incidents, sensor fleet, PRV status, and water loss audits, alongside a WebSocket gateway (`/ws/telemetry`) broadcasting live sensor updates to connected frontend clients.
 - **Dependencies**: Member 2 Task 1.
 - **Files / Area Involved**:
@@ -126,14 +126,12 @@
 ---
 
 ### Task 3: Hydro-Acoustic Leak Detection & FFT Signal Processing Engine
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Build a signal processing module using `numpy` and `scipy.signal` to execute Fast Fourier Transforms (FFT) on hydrophone acoustic audio data, isolating leak frequency signatures (100Hz–800Hz) and scoring leak confidence (0–100%).
 - **Dependencies**: Member 2 Task 1.
 - **Files / Area Involved**:
   - `backend/app/ai/fft_processor.py` [NEW]
-  - `backend/app/ai/leak_classifier.py` [NEW]
-  - `backend/app/api/routers/acoustic.py` [NEW]
-  - `backend/data/sample_audio/*` [NEW]
+  - `backend/app/api/routers/incidents.py` [UPDATED]
 - **Completion Criteria**: Audio processor analyzes raw hydrophone signals, outputs spectral density arrays, and creates incident alerts when confidence exceeds 75%.
 - **Testing / Commit Checkpoint**: Run test suite on normal vs leak audio recordings verifying detection accuracy.  
   `git commit -m "feat(backend/ai): hydro-acoustic FFT signal processor & leak classifier"`
@@ -141,7 +139,7 @@
 ---
 
 ### Task 4: AI Repair Prioritization & Hydro-Structural Sinkhole Risk Matrix
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Implement an optimization engine ranking pipe repair priorities using: (1) Water Loss Rate (L/min), (2) Soil Erosion / Sinkhole Hazard Index (pressure drop + pipe age), and (3) Financial ROI ($ saved/day).
 - **Dependencies**: Member 2 Task 3.
 - **Files / Area Involved**:
@@ -154,12 +152,12 @@
 ---
 
 ### Task 5: End-to-End Hackathon Demo Suite & Scenario Trigger Engine
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Create triggerable demo scenario endpoints (`POST /api/demo/trigger-burst`, `POST /api/demo/verify-repair`, `POST /api/demo/reset`) allowing instantaneous injection of burst leaks and telemetry spikes for live judging demonstrations.
 - **Dependencies**: Member 2 Task 2, Member 2 Task 3, Member 2 Task 4.
 - **Files / Area Involved**:
   - `backend/app/api/routers/demo.py` [NEW]
-  - `backend/app/simulator/scenario_engine.py` [NEW]
+  - `backend/app/simulator/telemetry_generator.py` [UPDATED]
 - **Completion Criteria**: Triggering a burst injects synthetic telemetry spikes, generates an AI alert, and pushes real-time WebSocket updates to the frontend within 1 second.
 - **Testing / Commit Checkpoint**: Execute end-to-end integration test from scenario trigger to dashboard state update.  
   `git commit -m "feat(backend): demo scenario injector & end-to-end test suite"`
