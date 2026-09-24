@@ -34,7 +34,8 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
   const [hoveredNode, setHoveredNode] = useState<NetworkNode | null>(null);
   const [showPipes, setShowPipes] = useState(true);
   const [showHeatmap, setShowHeatmap] = useState(true);
-  const [showSensors, setShowSensors] = useState(true);
+  const [showContours, setShowContours] = useState(true);
+  const [pipeFilter, setPipeFilter] = useState<'ALL' | 'LEAK_ONLY' | 'HIGH_PRESSURE'>('ALL');
   const [zoomLevel, setZoomLevel] = useState(1);
 
   // Suspected leak node reference
@@ -140,8 +141,32 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
             }`}
           >
             <Waves className="w-3.5 h-3.5" />
-            <span>Acoustic Heatmap</span>
+            <span>Heatmap</span>
           </button>
+
+          {/* Toggle Pressure Contours */}
+          <button
+            onClick={() => setShowContours(!showContours)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center gap-1.5 transition-all ${
+              showContours
+                ? 'bg-indigo-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400'
+                : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span>DMA Contours</span>
+          </button>
+
+          {/* Pipe Filter Select */}
+          <select
+            value={pipeFilter}
+            onChange={(e) => setPipeFilter(e.target.value as 'ALL' | 'LEAK_ONLY' | 'HIGH_PRESSURE')}
+            className="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 outline-none"
+          >
+            <option value="ALL">All Pipes</option>
+            <option value="LEAK_ONLY">Leaks Only</option>
+            <option value="HIGH_PRESSURE">High Pressure</option>
+          </select>
 
           {/* Zoom Controls */}
           <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/60 p-0.5">
@@ -236,8 +261,28 @@ export const NetworkTopologyMap: React.FC<NetworkTopologyMapProps> = ({
               </marker>
             </defs>
 
+            {/* DMA Pressure Iso-Contours Layer */}
+            {showContours && (
+              <g className="pointer-events-none opacity-30">
+                <path d="M 50 120 Q 250 80 450 140 T 850 110" fill="none" stroke="#6366f1" strokeWidth="2" strokeDasharray="6 6" />
+                <text x="70" y="115" fill="#818cf8" fontSize="10" fontFamily="monospace">65 PSI Contour</text>
+                
+                <path d="M 80 260 Q 350 200 650 280 T 950 240" fill="none" stroke="#3b82f6" strokeWidth="2" strokeDasharray="6 6" />
+                <text x="100" y="255" fill="#60a5fa" fontSize="10" fontFamily="monospace">55 PSI Contour</text>
+
+                <path d="M 600 180 Q 750 140 900 260" fill="none" stroke="#ef4444" strokeWidth="2" strokeDasharray="4 4" />
+                <text x="720" y="170" fill="#f87171" fontSize="10" fontFamily="monospace" fontWeight="bold">Pressure Drop Anomaly Zone (42 PSI)</text>
+              </g>
+            )}
+
             {/* Pipeline Vector Connections */}
-            {showPipes && pipes.map((pipe) => {
+            {showPipes && pipes
+              .filter(p => {
+                if (pipeFilter === 'LEAK_ONLY') return p.status === 'LEAK_DETECTED';
+                if (pipeFilter === 'HIGH_PRESSURE') return p.status === 'HIGH_PRESSURE';
+                return true;
+              })
+              .map((pipe) => {
               const fromNode = nodes.find(n => n.id === pipe.fromNodeId);
               const toNode = nodes.find(n => n.id === pipe.toNodeId);
               if (!fromNode || !toNode) return null;

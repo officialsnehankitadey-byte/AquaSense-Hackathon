@@ -19,9 +19,12 @@ import {
   X,
   Layers,
   Sparkles,
-  ArrowUpRight
+  ArrowUpRight,
+  Radio,
+  Volume2
 } from 'lucide-react';
 import { Incident, SeverityLevel, IncidentStatus } from '../../types/dashboard';
+import { AudioSpectrumPlayer } from './AudioSpectrumPlayer';
 
 interface IncidentsListProps {
   incidents: Incident[];
@@ -36,6 +39,7 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
 }) => {
   const [filterSeverity, setFilterSeverity] = useState<string>('ALL');
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [spectrumIncident, setSpectrumIncident] = useState<Incident | null>(null);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
 
   const handleStatusChange = (incidentId: string, newStatus: IncidentStatus) => {
@@ -259,7 +263,18 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
                   <td className="py-3.5 px-4">
                     {getStatusBadge(inc.status)}
                   </td>
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-4 text-right space-x-1.5">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSpectrumIncident(inc);
+                      }}
+                      className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 transition-all inline-flex items-center gap-1 text-xs font-semibold"
+                      title="Analyze Hydro-Acoustic Audio Spectrum"
+                    >
+                      <Radio className="w-3.5 h-3.5 text-cyan-500 animate-pulse" />
+                      <span>Audio FFT</span>
+                    </button>
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
@@ -449,6 +464,26 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
                 </div>
               </div>
 
+              {/* Acoustic Spectrum Player Button Action Card */}
+              <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-indigo-500/10 border border-cyan-500/30 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-cyan-500/20 text-cyan-400">
+                    <Radio className="w-5 h-5 animate-pulse" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-extrabold text-slate-900 dark:text-white">Hydro-Acoustic Audio Recording</h4>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">Analyze 100Hz–800Hz FFT spectral density & resonance frequency signature</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSpectrumIncident(selectedIncident)}
+                  className="px-3 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-extrabold transition-all shadow-md shadow-cyan-500/20 flex items-center gap-1.5 shrink-0"
+                >
+                  <Volume2 className="w-4 h-4" />
+                  <span>Play Spectrum</span>
+                </button>
+              </div>
+
               {/* Summary & Recommended Action */}
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
                 <div>
@@ -517,6 +552,14 @@ export const IncidentsList: React.FC<IncidentsListProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Hydro-Acoustic Audio Spectrum Player Modal */}
+      {spectrumIncident && (
+        <AudioSpectrumPlayer
+          incident={spectrumIncident}
+          onClose={() => setSpectrumIncident(null)}
+        />
       )}
     </div>
   );

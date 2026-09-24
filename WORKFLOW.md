@@ -49,7 +49,7 @@
 ---
 
 ### Task 3: Interactive GIS Network Map & Acoustic Audio Spectrum Player
-- **Status**: `[PENDING]`
+- **Status**: `[COMPLETED]`
 - **Goal**: Upgrade `NetworkTopologyMap` with dynamic GIS layer controls (DMA pressure contours, pipe status filters) and build an `AudioSpectrumPlayer` modal to play hydro-acoustic audio files with real-time FFT frequency spectrum visualization.
 - **Dependencies**: Member 1 Task 2, Member 2 Task 3 (Acoustic audio stream & FFT API).
 - **Files / Area Involved**:
