@@ -20,9 +20,9 @@ services:
         fromService:
           type: web
           name: aquasense-backend
-          property: url
+          property: host
       - key: NEXT_PUBLIC_WS_URL
         fromService:
           type: web
           name: aquasense-backend
-          property: url
+          property: host
